@@ -1,33 +1,11 @@
 {
-    "name": "Sereno PKI - Rust & Security Dev Environment",
-    "image": "://microsoft.com",
-    
-    "features": {
-        "ghcr.io/devcontainers/features/common-utils:1": {
-            "installZsh": true,
-            "configureZshAsDefaultShell": true
-        }
-    },
-    
-    // Instalamos herramientas del sistema: C compiler, SQLite, Neovim y dependencias de portabilidad
-    "updateContentCommand": "apt-get update && apt-get install -y build-essential sqlite3 libsqlite3-dev pkg-config neovim xclip tmux",
-
-    "customizations": {
-        "vscode": {
-            // Esto se cargará automáticamente cuando programes desde el navegador
-            "extensions": [
-                "rust-lang.rust-analyzer",
-                "serayuzgur.crates",
-                "tamasfe.even-better-toml",
-                "alexcvzz.vscode-sqlite",
-                "asvetliakov.vscode-neovim" // Emulación de Neovim en el navegador por si la necesitas
-            ],
-            "settings": {
-                "terminal.integrated.defaultProfile.linux": "zsh",
-                "rust-analyzer.check.command": "clippy"
-            }
-        }
-    },
-
-    "remoteUser": "vscode"
+  "name": "Rust Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-bookworm",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  }
 }
