@@ -1,0 +1,12 @@
+[package]
+name = "sereno"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+x509-parser = "0.16"
+sha2 = "0.10"
+chrono = "0.4"
