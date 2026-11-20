@@ -1,52 +1,41 @@
 # Copilot instructions for sereno
 
 ## Project overview
-This repository is described as "A lightweight PKI, certificate auditor, and secure vault built in Rust. [CISA Memory Safety Framework]". The current checkout is intentionally minimal, but the project intent is clearly Rust-first and security-focused.
-
-When working here, keep the mental model centered on:
-- PKI and certificate handling
-- certificate auditing and trust validation
-- secure storage and sensitive material handling
-- memory-safe Rust patterns
-
-The repository is provisioned with a Rust devcontainer (`mcr.microsoft.com/devcontainers/rust:1-bookworm`) and rust-analyzer, which is the expected environment for future implementation work.
+Sereno is a Rust PKI, certificate-auditing, and secure-vault project aligned with the CISA Memory Safety Framework. The checkout currently contains one small binary crate; implementation work may expand it substantially.
 
 ## Build, test, and lint commands
-No repository-defined build/test/lint scripts or Cargo manifest were present in this checkout, so there are no authoritative project commands to run yet.
+The Cargo package is in `sereno/`, not at the repository root.
 
-When the project is populated with a Rust crate or workspace, use Cargo as the source of truth:
-- `cargo build`
-- `cargo test`
-- `cargo clippy --all-targets --all-features -- -D warnings`
+```bash
+cd sereno
+cargo build
+cargo test
+cargo fmt --check
+cargo clippy --all-targets --all-features -- -D warnings
+```
 
-For a single test, prefer Cargo's filtering:
-- `cargo test <test_name>`
-- `cargo test <module>::<test_name>`
+To run one test by name or module path:
 
-If the repo later adds a `justfile` or `Makefile`, prefer those scripts over ad hoc commands.
+```bash
+cargo test <test_name>
+cargo test <module>::<test_name>
+```
+
+There are currently no repository test cases (`cargo test` reports 0 tests). Formatting, test, and lint commands are Cargo-native; no Makefile or task runner is present.
 
 ## High-level architecture
-The repository's stated purpose points to a project with three main concerns that should remain conceptually separate unless the codebase intentionally changes:
-
-1. PKI and certificate logic
-   - parsing, validating, and interpreting certificate material
-   - trust-chain and identity checks
-2. Security auditing
-   - certificate quality checks
-   - policy or compliance review logic
-   - detection of weak or dangerous certificate patterns
-3. Secure vaulting / secret handling
-   - storage boundaries for sensitive material
-   - constrained access to protected data
-
-In practice, keep certificate parsing, auditing, and vaulting concerns in distinct modules or crates rather than mixing them into a single layer. This project is intended to be security-sensitive, so isolation of responsibilities matters more than raw convenience.
+- `sereno/Cargo.toml` defines the single `sereno` binary package using Rust edition 2024.
+- `sereno/src/main.rs` is the only application source file and currently prints `Hello, world!`; it is not yet a library or modular CLI.
+- The dependency set identifies intended implementation areas: `x509-parser` for certificate parsing, `sha2` for hashing, `chrono` for time and validity handling, `serde`/`serde_json` for structured data, and `anyhow` for application errors.
+- README intent separates PKI/certificate processing, security auditing/trust validation, and secure vault storage. Keep these concerns in separate modules or crates as the implementation grows rather than combining certificate logic and vault handling in `main.rs`.
+- `.devcontainer/devcontainer.json` uses the Rust Debian Bookworm image and rust-analyzer.
 
 ## Key conventions
-- Treat Rust memory safety and security as first-class constraints; prefer explicit ownership and type-safe APIs.
-- Keep certificate and cryptography logic in clearly named modules instead of ad hoc helper functions.
-- Prefer small, testable functions and typed errors over broad, hidden side effects.
-- Follow Cargo-friendly layout conventions when adding code: use a crate root and focused submodules, not a monolithic implementation file.
-- Keep unsafe usage minimal and well-justified; this repository's intent is aligned with the CISA Memory Safety Framework and should not be treated as a place for low-safety shortcuts.
-- Until a different structure is introduced, assume the project will follow standard Rust crate/workspace conventions rather than framework-specific patterns.
+- Run Cargo commands from `sereno/`; the repository root has no Cargo manifest.
+- Use Rust 2024 edition idioms and keep ownership explicit.
+- Preserve the separation among certificate parsing/validation, audit rules, and secret/vault storage; do not expose private key material or plaintext secrets in logs, diagnostics, serialized audit output, or example fixtures.
+- Prefer typed, contextual errors (including `thiserror` if/where a public error enum is needed) over broad hidden side effects. `anyhow` is already the application dependency.
+- For cryptographic and certificate code, keep parsing and policy decisions testable independently and minimize `unsafe` code.
+- `target/` and Rust build artifacts are gitignored.
 
-No repo-specific AGENTS.md/CLAUDE.md/Cursor rules were present in this checkout; this file is the source of truth for future Copilot sessions in this repository.
+No separate AGENTS.md, CLAUDE.md, Cursor, or Cline instruction files are present.
