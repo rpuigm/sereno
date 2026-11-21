@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, Write};
 
 use clap::{CommandFactory, Parser, Subcommand};
 use clap_complete::{Shell, generate};
@@ -31,9 +31,9 @@ impl Cli {
                 };
                 match self.format {
                     OutputFormat::Text => {
-                        print_text(&format!("{} {}", payload.name, payload.version))
+                        print_text(&format!("{} {}", payload.name, payload.version))?
                     }
-                    OutputFormat::Json => print_json(&payload),
+                    OutputFormat::Json => print_json(&payload)?,
                 }
             }
             Command::Doctor => {
@@ -48,13 +48,15 @@ impl Cli {
                     OutputFormat::Text => print_text(&format!(
                         "{} {}: ready\nOS: {}\nArchitecture: {}",
                         payload.binary, payload.version, payload.os, payload.arch
-                    )),
-                    OutputFormat::Json => print_json(&payload),
+                    ))?,
+                    OutputFormat::Json => print_json(&payload)?,
                 }
             }
             Command::Completion { shell } => {
                 let mut command = Cli::command();
-                generate(shell, &mut command, "sereno", &mut io::stdout());
+                let mut script = Vec::new();
+                generate(shell, &mut command, "sereno", &mut script);
+                io::stdout().lock().write_all(&script)?;
             }
         }
 
