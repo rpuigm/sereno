@@ -40,9 +40,19 @@ in `sereno/Cargo.toml`.
 For a release, update the version in `sereno/Cargo.toml`, run `cargo check` to
 refresh `sereno/Cargo.lock`, move the release notes from `Unreleased` to a
 versioned section in [CHANGELOG.md](CHANGELOG.md), and run the project's
-validation commands (`cargo fmt --check`, `cargo test`, and
-`cargo clippy --all-targets --all-features -- -D warnings`). After committing
-those changes, create an annotated tag:
+validation commands from `sereno/`, where the Cargo manifest is located:
+
+```bash
+cd sereno
+cargo check
+cargo fmt --check
+cargo test
+cargo clippy --all-targets --all-features -- -D warnings
+cd ..
+```
+
+After committing the release changes, create the annotated tag from the
+repository root:
 
 ```bash
 git tag -a vX.Y.Z -m "Release vX.Y.Z"
